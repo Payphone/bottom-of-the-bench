@@ -1,3 +1,5 @@
+(load "classes.l")
+
 (default *Boards '("prog" "off" "meta"))
 
 # The only HTML control characters that really matter are '<' and '&'
@@ -11,11 +13,11 @@
             (inc 'Count) ) )
       Count ) )
 
-(de replaceCodeTags (Str)
-   (let Str (chop Str)
-      (make
-         (let Char (pop 'Str)
-            (unless (or (= C))(pop Str)) ) ) )
+#(de replaceCodeTags (Str)
+#   (let Str (chop Str)
+#      (make
+#         (let Char (pop 'Str)
+#            (unless (or (= C))(pop Str)) ) ) ))
 
 (de linkInquiries (Str Lst)
    (if (car Lst)
@@ -110,24 +112,18 @@
       (gui 'pass '(+Init +TextField) (randpw 12) 10 "Password" )
       (gui '(+Button) "submit"
          (fill
-            '(let (inquiries (findInquiries (val> (: home comment)))
-                   salt (salt))
+            '(let (postNumber (genKey 'number '+Box))
                 (and
                    (new! '(+Reply)
-                      'number (genKey 'number '+Box)
+                      'number postNumber
                       'thread (db 'number '+Box @ThreadNumber)
                       'name (val> (: home name))
-                      'comment
-                      (linkInquiries
-                         (sanitizeInput (val> (: home comment)))
-                         inquiries )
-                      'inquiries inquiries
+                      'comment (sanitizeInput (val> (: home comment)))
                       'date (date)
                       'time (time)
-                      'pass (hashString (pack salt (val> (: home pass))))
-                      'salt salt )
-                   (cookie (get @ 'number)
-                      (hashString (pack (get @ 'salt) (get @ 'pass))) )
+                      'pass (hashString (val> (: home pass)))
+                      'salt (salt) )
+                   (cookie postNumber (hashString (val> (: home pass))) )
                    (url (pack "!thread?+" @ThreadNumber)) ) ) ) ) ) )
 
 (de reply (Number)
@@ -157,6 +153,7 @@
    (app)
    (action
       (html 0 "New Thread" "milligram.css" NIL
+         (navBar)
          (<div> "container"
             (<h1> NIL "New Thread")
             (form NIL
@@ -173,15 +170,15 @@
                       (alert NIL
                          (<div> "notify error" "All fields must be filled out.") )
                       (let (postNumber (genKey 'number '+Box))
-                         (and
+                         (prog
                             (cookie postNumber (hashString (val> (: home pass))))
                             (new! '(+Thread)
                                'number postNumber
                                'board (val> (: home board))
                                'name (val> (: home name))
                                'subject (val> (: home subject))
-                               'comment (replaceCodeTags (sanitizeInput
-                                                            (val> (: home comment)) ) )
+                               'comment (sanitizeInput
+                                           (val> (: home comment)) ) 
                                'date (date)
                                'time (time)
                                'pass (hashString (val> (: home pass)))

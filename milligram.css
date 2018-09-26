@@ -274,7 +274,7 @@ input[type='radio'] {
   max-width: 112.0rem;
   padding: 0 2.0rem;
   position: relative;
-  width: 100%;
+  width: 80%;
 }
 
 .row {
@@ -601,6 +601,7 @@ img {
 
 /*# sourceMappingURL=milligram.css.map */
 /* Custom Stuff */
+
 .center {
     text-align: center;
 }
@@ -678,4 +679,12 @@ ul {
 
 .boardName {
   text-transform: capitalize;
+}
+
+.post {
+  margin: 0 auto;
+  max-width: 112.0rem;
+  padding: 0 2.0rem;
+  position: relative;
+  width: 100%;
 }

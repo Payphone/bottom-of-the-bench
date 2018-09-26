@@ -3,3 +3,9 @@
 
 (de numStr? (C)
    (<= "0" C "9") )
+
+### HTML ###
+
+(de <center> (Attr . Prg)
+   (tag 'center Attr 2 Prg)
+   (prinl) )
